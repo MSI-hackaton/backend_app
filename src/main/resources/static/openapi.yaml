@@ -1,0 +1,31 @@
+openapi: 3.0.3
+info:
+  title: MSI Hackathon API (YAML)
+  description: Дополнительная документация из YAML файла
+  version: 1.0.0-yaml
+
+paths:
+  /api/projects:
+    get:
+      summary: 📋 Получить все проекты (YAML переопределение)
+      description: "Расширенное описание из YAML файла"
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Список проектов
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
