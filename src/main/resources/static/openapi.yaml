@@ -8,18 +8,23 @@ paths:
   /api/projects:
     get:
       summary: 📋 Получить все проекты (YAML переопределение)
-      description: "Расширенное описание из YAML файла"
+      description: "Возвращает список всех доступных проектов. Поддерживает пагинацию с помощью параметров page и size."
       parameters:
         - name: page
           in: query
+          required: false
           schema:
             type: integer
             default: 0
+            minimum: 0
         - name: size
           in: query
+          required: false
           schema:
             type: integer
             default: 10
+            minimum: 1
+            maximum: 100
       responses:
         '200':
           description: Список проектов
@@ -28,4 +33,212 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
+                  $ref: '#/components/schemas/ProjectResponseDto'
+
+    post:
+      summary: Создать проект
+      description: "Создаёт новый строительный проект."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectCreateDto'
+      responses:
+        '201':
+          description: Проект создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectResponseDto'
+
+  /api/projects/{id}:
+    get:
+      summary: Получить проект по ID
+      description: "Возвращает проект по его идентификатору."
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Проект найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectResponseDto'
+        '404':
+          description: Проект не найден
+
+    delete:
+      summary: Удалить проект
+      description: "Удаляет проект по идентификатору."
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Проект удалён
+        '404':
+          description: Проект не найден
+
+  /api/projects/{projectId}/photos:
+    post:
+      summary: Добавить фотографию к проекту
+      description: "Создаёт новую запись фотографии и привязывает её к указанному проекту."
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectPhotoCreateDto'
+      responses:
+        '201':
+          description: Фотография успешно добавлена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectPhotoResponseDto'
+        '404':
+          description: Проект не найден
+
+    get:
+      summary: Получить фотографии проекта
+      description: "Возвращает список всех фотографий, привязанных к проекту."
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Список фотографий проекта
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProjectPhotoResponseDto'
+        '404':
+          description: Проект не найден
+
+  /api/projects/photos/{projectPhotoId}:
+    delete:
+      summary: Удалить фотографию проекта
+      description: "Удаляет фотографию проекта по её идентификатору."
+      parameters:
+        - name: projectPhotoId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Фотография удалена
+        '404':
+          description: Фотография не найдена
+
+components:
+  schemas:
+    ProjectCreateDto:
+      type: object
+      required:
+        - title
+      properties:
+        title:
+          type: string
+          description: Название проекта
+          maxLength: 255
+        description:
+          type: string
+          description: Описание проекта
+        area:
+          type: number
+          format: double
+          description: Площадь в квадратных метрах
+        floors:
+          type: integer
+          description: Количество этажей
+        price:
+          type: number
+          format: double
+          description: Стоимость проекта
+        constructionTime:
+          type: integer
+          description: Срок строительства в днях
+
+    ProjectResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+        area:
+          type: number
+          format: double
+        floors:
+          type: integer
+        price:
+          type: number
+          format: double
+        constructionTime:
+          type: integer
+        status:
+          type: string
+          description: Статус проекта
+          example: AVAILABLE
+        photos:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProjectPhotoResponseDto'
+
+    ProjectPhotoCreateDto:
+      type: object
+      required:
+        - photoId
+      properties:
+        photoId:
+          type: string
+          format: uuid
+          description: ID сущности Photo
+        sortOrder:
+          type: integer
+          description: Порядок сортировки фотографии в галерее
+        description:
+          type: string
+          description: Описание фотографии
+
+    ProjectPhotoResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        url:
+          type: string
+          description: URL фотографии
+        sortOrder:
+          type: integer
+        description:
+          type: string

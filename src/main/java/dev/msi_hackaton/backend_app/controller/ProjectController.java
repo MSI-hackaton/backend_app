@@ -1,6 +1,8 @@
 package dev.msi_hackaton.backend_app.controller;
 
 import dev.msi_hackaton.backend_app.dto.request.ProjectCreateDto;
+import dev.msi_hackaton.backend_app.dto.request.ProjectPhotoCreateDto;
+import dev.msi_hackaton.backend_app.dto.response.ProjectPhotoResponseDto;
 import dev.msi_hackaton.backend_app.dto.response.ProjectResponseDto;
 import dev.msi_hackaton.backend_app.service.ProjectService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -43,5 +45,37 @@ public class ProjectController {
     @Operation(summary = "Удалить проект", description = "Удаляет проект по идентификатору")
     public void deleteProject(@PathVariable UUID id) {
         projectService.deleteProject(id);
+    }
+
+    @PostMapping("/{projectId}/photos")
+    @ResponseStatus(HttpStatus.CREATED)
+    @Operation(
+            summary = "Добавить фотографию к проекту",
+            description = "Создаёт новую запись фотографии и привязывает её к указанному проекту"
+    )
+    public ProjectPhotoResponseDto addPhotoToProject(
+            @PathVariable UUID projectId,
+            @RequestBody ProjectPhotoCreateDto projectPhotoCreateDto) {
+        return projectService.addPhotoToProject(projectId, projectPhotoCreateDto);
+    }
+
+    @GetMapping("/{projectId}/photos")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(
+            summary = "Получить фотографии проекта",
+            description = "Возвращает список всех фотографий, привязанных к проекту"
+    )
+    public List<ProjectPhotoResponseDto> getProjectPhotos(@PathVariable UUID projectId) {
+        return projectService.getProjectPhotos(projectId);
+    }
+
+    @DeleteMapping("/photos/{projectPhotoId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(
+            summary = "Удалить фотографию проекта",
+            description = "Удаляет фотографию проекта по идентификатору"
+    )
+    public void deleteProjectPhoto(@PathVariable UUID projectPhotoId) {
+        projectService.deleteProjectPhoto(projectPhotoId);
     }
 }
