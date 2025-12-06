@@ -1,0 +1,1 @@
+# Educational hackathon project 2025 - Backend
