@@ -12,10 +12,6 @@ import lombok.Setter;
 public class ConstructionRequest extends AbstractEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id", nullable = false)
     private Project project;
 
@@ -27,4 +23,12 @@ public class ConstructionRequest extends AbstractEntity {
     )
     private RequestStatus status;
 
+    @Column(name = "anonymous_full_name")
+    private String anonymousFullName;
+
+    @Column(name = "anonymous_email")
+    private String anonymousEmail;
+
+    @Column(name = "anonymous_phone")
+    private String anonymousPhone;
 }

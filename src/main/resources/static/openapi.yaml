@@ -228,6 +228,57 @@ paths:
         '404':
           description: Фотография не найдена
 
+  /api/requests/projects/{projectId}:
+    post:
+      summary: Создать заявку на строительство
+      description: Создаёт новую заявку на строительство по выбранному проекту и возвращает данные заявки.
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConstructionRequestCreateDto'
+      responses:
+        '201':
+          description: Заявка успешно создана
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConstructionRequestResponseDto'
+        '404':
+          description: Проект не найден
+
+  /api/requests/{requestId}/status:
+    get:
+      summary: Получить статус заявки
+      description: Возвращает текущий статус заявки на строительство по её идентификатору.
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Текущий статус заявки
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConstructionRequestStatusResponseDto'
+        '404':
+          description: Заявка не найдена
+
+
+
+
 components:
   schemas:
     ProjectCreateDto:
@@ -315,6 +366,7 @@ components:
           type: integer
         description:
           type: string
+
     PhotoResponseDto:
       type: object
       properties:
@@ -328,3 +380,41 @@ components:
           type: string
           format: date-time
           description: Время загрузки фотографии
+
+    ConstructionRequestCreateDto:
+      type: object
+      properties:
+        comment:
+          type: string
+          description: Дополнительный комментарий к заявке
+
+    ConstructionRequestResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        projectId:
+          type: string
+          format: uuid
+        status:
+          type: string
+          description: Статус заявки
+          example: PENDING
+        createdAt:
+          type: string
+          format: date-time
+
+    ConstructionRequestStatusResponseDto:
+      type: object
+      properties:
+        requestId:
+          type: string
+          format: uuid
+        status:
+          type: string
+          description: Текущий статус заявки
+          example: APPROVED
+        updatedAt:
+          type: string
+          format: date-time
