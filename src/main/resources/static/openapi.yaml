@@ -155,6 +155,79 @@ paths:
         '404':
           description: Фотография не найдена
 
+  /api/photos:
+    get:
+      summary: Получить список фотографий
+      description: Возвращает список всех загруженных фотографий.
+      responses:
+        '200':
+          description: Список фотографий
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PhotoResponseDto'
+
+    post:
+      summary: Загрузить фотографию
+      description: Загружает файл изображения и создаёт сущность фотографии.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Файл изображения
+      responses:
+        '201':
+          description: Фотография успешно загружена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PhotoResponseDto'
+
+  /api/photos/{id}:
+    get:
+      summary: Получить фотографию по ID
+      description: Возвращает информацию о фотографии по её идентификатору.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Фотография найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PhotoResponseDto'
+        '404':
+          description: Фотография не найдена
+
+    delete:
+      summary: Удалить фотографию
+      description: Удаляет фотографию по идентификатору.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Фотография удалена
+        '404':
+          description: Фотография не найдена
+
 components:
   schemas:
     ProjectCreateDto:
@@ -242,3 +315,16 @@ components:
           type: integer
         description:
           type: string
+    PhotoResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        url:
+          type: string
+          description: URL сохранённого изображения
+        createdAt:
+          type: string
+          format: date-time
+          description: Время загрузки фотографии

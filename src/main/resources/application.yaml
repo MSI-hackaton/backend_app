@@ -25,3 +25,7 @@ springdoc:
   api-docs:
     enabled: true
     paths-to-match: /api/**
+
+storage:
+  local:
+    directory: ./storage

@@ -20,14 +20,12 @@ public class ProjectController {
     private final ProjectService projectService;
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Получить список проектов", description = "Возвращает все доступные проекты")
     public List<ProjectResponseDto> getAllProjects() {
         return projectService.getAllProjects();
     }
 
     @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Получить проект по ID", description = "Возвращает проект по его идентификатору")
     public ProjectResponseDto getProjectById(@PathVariable UUID id) {
         return projectService.getProjectById(id);
@@ -60,7 +58,6 @@ public class ProjectController {
     }
 
     @GetMapping("/{projectId}/photos")
-    @ResponseStatus(HttpStatus.OK)
     @Operation(
             summary = "Получить фотографии проекта",
             description = "Возвращает список всех фотографий, привязанных к проекту"
