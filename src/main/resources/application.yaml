@@ -29,3 +29,15 @@ springdoc:
 storage:
   local:
     directory: ./storage
+
+    # Настройки видео (эмуляция)
+    video:
+      stream:
+        emulation:
+          enabled: true
+          url: https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4
+
+    # Если нужно WebSocket (опционально)
+    spring:
+      websocket:
+        enabled: false  # Можно включить позже

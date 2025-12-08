@@ -1,18 +1,11 @@
 package dev.msi_hackaton.backend_app.dao.entities;
 
 import jakarta.persistence.*;
-import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.UUID;
 
 @Entity
 @Table(name = "chat_messages")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class ChatMessage extends AbstractEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -23,9 +16,44 @@ public class ChatMessage extends AbstractEntity {
     @JoinColumn(name = "sender_id", nullable = false)
     private User sender;
 
-    @Column(name = "text", length = 5000, nullable = false)  // 5KB лимит
+    @Column(name = "message", length = 5000, nullable = false)
     private String message;
 
     @Column(name = "is_read", nullable = false, columnDefinition = "boolean DEFAULT false")
     private Boolean isRead;
+
+    public ChatMessage() {
+    }
+
+    public ConstructionRequest getRequest() {
+        return request;
+    }
+
+    public void setRequest(ConstructionRequest request) {
+        this.request = request;
+    }
+
+    public User getSender() {
+        return sender;
+    }
+
+    public void setSender(User sender) {
+        this.sender = sender;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public Boolean getIsRead() {
+        return isRead;
+    }
+
+    public void setIsRead(Boolean isRead) {
+        this.isRead = isRead;
+    }
 }

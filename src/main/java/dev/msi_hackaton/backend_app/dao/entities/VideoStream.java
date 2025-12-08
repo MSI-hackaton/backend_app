@@ -1,11 +1,9 @@
 package dev.msi_hackaton.backend_app.dao.entities;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import java.time.Instant;
+import java.util.UUID;
 
-@Getter
-@Setter
 @Entity
 @Table(name = "video_streams")
 public class VideoStream extends AbstractEntity {
@@ -15,8 +13,35 @@ public class VideoStream extends AbstractEntity {
     private ConstructionRequest request;
 
     @Column(name = "stream_url", nullable = false)
-    private String streamUrl;  // URL потокового видео
+    private String streamUrl;
 
     @Column(name = "camera_name", nullable = false)
-    private String cameraName;  // Название камеры
+    private String cameraName;
+
+    public VideoStream() {
+    }
+
+    public ConstructionRequest getRequest() {
+        return request;
+    }
+
+    public void setRequest(ConstructionRequest request) {
+        this.request = request;
+    }
+
+    public String getStreamUrl() {
+        return streamUrl;
+    }
+
+    public void setStreamUrl(String streamUrl) {
+        this.streamUrl = streamUrl;
+    }
+
+    public String getCameraName() {
+        return cameraName;
+    }
+
+    public void setCameraName(String cameraName) {
+        this.cameraName = cameraName;
+    }
 }
