@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: backend_app
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus
+  endpoint:
+    health:
+      show-details: always
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    urls:
+      - name: "Annotations (Code)"
+        url: /v3/api-docs
+      - name: "Custom YAML"
+        url: /v3/api-docs-yaml
+    defaultModelsExpandDepth: -1
+  api-docs:
+    enabled: true
+    paths-to-match: /api/**
+
+storage:
+  local:
+    directory: ./storage
