@@ -13,7 +13,8 @@ import java.util.UUID;
 @Service
 public class LocalStorageService implements StorageService {
 
-    @Value("${storage.local.directory}")
+    // Используем значение по умолчанию
+    @Value("${storage.local.directory:./uploads}")
     private String storageDirectory;
 
     @Override
@@ -25,7 +26,8 @@ public class LocalStorageService implements StorageService {
         }
 
         // Генерируем уникальное имя файла
-        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+        String originalFilename = file.getOriginalFilename();
+        String fileName = UUID.randomUUID() + "_" + (originalFilename != null ? originalFilename : "file");
         Path filePath = storagePath.resolve(fileName);
 
         // Сохраняем файл

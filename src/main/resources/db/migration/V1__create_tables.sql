@@ -10,7 +10,9 @@ CREATE TABLE users
     salt          VARCHAR(255)                                                                       NOT NULL,
     full_name     VARCHAR(255)                                                                       NOT NULL,
     role          VARCHAR(20) DEFAULT 'CUSTOMER' CHECK (role IN ('CUSTOMER', 'SPECIALIST', 'ADMIN')) NOT NULL,
-    CONSTRAINT pk_users PRIMARY KEY (id)
+    CONSTRAINT pk_users PRIMARY KEY (id),
+    CONSTRAINT uc_users_email UNIQUE (email),
+    CONSTRAINT uc_users_phone UNIQUE (phone)
 );
 
 -- Таблица проектов
@@ -49,7 +51,9 @@ CREATE TABLE project_photos
     photo_id    UUID                        NOT NULL,
     sort_order  INTEGER,
     description TEXT,
-    CONSTRAINT pk_project_photos PRIMARY KEY (id)
+    CONSTRAINT pk_project_photos PRIMARY KEY (id),
+    CONSTRAINT fk_project_photos_on_photo FOREIGN KEY (photo_id) REFERENCES photos (id) ON DELETE CASCADE,
+    CONSTRAINT fk_project_photos_on_project FOREIGN KEY (project_id) REFERENCES projects (id) ON DELETE CASCADE
 );
 
 -- Таблица заявок на строительство
@@ -63,7 +67,8 @@ CREATE TABLE construction_requests
     anonymous_full_name VARCHAR(255),
     anonymous_email     VARCHAR(255),
     anonymous_phone     VARCHAR(255),
-    CONSTRAINT pk_construction_requests PRIMARY KEY (id)
+    CONSTRAINT pk_construction_requests PRIMARY KEY (id),
+    CONSTRAINT fk_construction_requests_on_project FOREIGN KEY (project_id) REFERENCES projects (id) ON DELETE CASCADE
 );
 
 -- Таблица документов
@@ -77,7 +82,8 @@ CREATE TABLE documents
     file_url    VARCHAR(255)                                                                                          NOT NULL,
     status      VARCHAR(20) DEFAULT 'UPLOADED' CHECK (status IN ('UPLOADED', 'UNDER_REVIEW', 'APPROVED', 'REJECTED')) NOT NULL,
     reviewed_at TIMESTAMP WITHOUT TIME ZONE,
-    CONSTRAINT pk_documents PRIMARY KEY (id)
+    CONSTRAINT pk_documents PRIMARY KEY (id),
+    CONSTRAINT fk_documents_on_request FOREIGN KEY (request_id) REFERENCES construction_requests (id) ON DELETE CASCADE
 );
 
 -- Таблица этапов строительства
@@ -92,7 +98,8 @@ CREATE TABLE construction_stages
     start_date  TIMESTAMP WITHOUT TIME ZONE,
     end_date    TIMESTAMP WITHOUT TIME ZONE,
     status      VARCHAR(20) DEFAULT 'PLANNED' CHECK (status IN ('PLANNED', 'IN_PROGRESS', 'COMPLETED')) NOT NULL,
-    CONSTRAINT pk_construction_stages PRIMARY KEY (id)
+    CONSTRAINT pk_construction_stages PRIMARY KEY (id),
+    CONSTRAINT fk_construction_stages_on_request FOREIGN KEY (request_id) REFERENCES construction_requests (id) ON DELETE CASCADE
 );
 
 -- Таблица отчетов по этапам
@@ -104,7 +111,8 @@ CREATE TABLE stage_reports
     stage_id    UUID                                                                 NOT NULL,
     description TEXT                                                                 NOT NULL,
     status      VARCHAR(20) DEFAULT 'DRAFT' CHECK (status IN ('DRAFT', 'PUBLISHED')) NOT NULL,
-    CONSTRAINT pk_stage_reports PRIMARY KEY (id)
+    CONSTRAINT pk_stage_reports PRIMARY KEY (id),
+    CONSTRAINT fk_stage_reports_on_stage FOREIGN KEY (stage_id) REFERENCES construction_stages (id) ON DELETE CASCADE
 );
 
 -- Таблица фотографий отчетов
@@ -116,10 +124,11 @@ CREATE TABLE report_photos
     report_id   UUID                        NOT NULL,
     url         VARCHAR(255)                NOT NULL,
     description TEXT,
-    CONSTRAINT pk_report_photos PRIMARY KEY (id)
+    CONSTRAINT pk_report_photos PRIMARY KEY (id),
+    CONSTRAINT fk_report_photos_on_report FOREIGN KEY (report_id) REFERENCES stage_reports (id) ON DELETE CASCADE
 );
 
--- Таблица сообщений в чате (ИСПРАВЛЕНО: text -> message)
+-- Таблица сообщений в чате
 CREATE TABLE chat_messages
 (
     id         UUID                        NOT NULL,
@@ -127,9 +136,11 @@ CREATE TABLE chat_messages
     updated_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     request_id UUID                        NOT NULL,
     sender_id  UUID                        NOT NULL,
-    message    VARCHAR(5000)               NOT NULL,  -- ИЗМЕНЕНО: было text, стало message
+    message    TEXT                        NOT NULL,
     is_read    BOOLEAN DEFAULT FALSE       NOT NULL,
-    CONSTRAINT pk_chat_messages PRIMARY KEY (id)
+    CONSTRAINT pk_chat_messages PRIMARY KEY (id),
+    CONSTRAINT fk_chat_messages_on_request FOREIGN KEY (request_id) REFERENCES construction_requests (id) ON DELETE CASCADE,
+    CONSTRAINT fk_chat_messages_on_sender FOREIGN KEY (sender_id) REFERENCES users (id) ON DELETE CASCADE
 );
 
 -- Таблица видеопотоков
@@ -141,46 +152,9 @@ CREATE TABLE video_streams
     request_id  UUID                        NOT NULL,
     stream_url  VARCHAR(255)                NOT NULL,
     camera_name VARCHAR(255)                NOT NULL,
-    CONSTRAINT pk_video_streams PRIMARY KEY (id)
+    CONSTRAINT pk_video_streams PRIMARY KEY (id),
+    CONSTRAINT fk_video_streams_on_request FOREIGN KEY (request_id) REFERENCES construction_requests (id) ON DELETE CASCADE
 );
-
--- Уникальные ограничения для пользователей
-ALTER TABLE users
-    ADD CONSTRAINT uc_users_email UNIQUE (email);
-
-ALTER TABLE users
-    ADD CONSTRAINT uc_users_phone UNIQUE (phone);
-
--- Внешние ключи
-ALTER TABLE project_photos
-    ADD CONSTRAINT fk_project_photos_on_photo FOREIGN KEY (photo_id) REFERENCES photos (id);
-
-ALTER TABLE project_photos
-    ADD CONSTRAINT fk_project_photos_on_project FOREIGN KEY (project_id) REFERENCES projects (id);
-
-ALTER TABLE construction_requests
-    ADD CONSTRAINT fk_construction_requests_on_project FOREIGN KEY (project_id) REFERENCES projects (id);
-
-ALTER TABLE documents
-    ADD CONSTRAINT fk_documents_on_request FOREIGN KEY (request_id) REFERENCES construction_requests (id);
-
-ALTER TABLE construction_stages
-    ADD CONSTRAINT fk_construction_stages_on_request FOREIGN KEY (request_id) REFERENCES construction_requests (id);
-
-ALTER TABLE stage_reports
-    ADD CONSTRAINT fk_stage_reports_on_stage FOREIGN KEY (stage_id) REFERENCES construction_stages (id);
-
-ALTER TABLE report_photos
-    ADD CONSTRAINT fk_report_photos_on_report FOREIGN KEY (report_id) REFERENCES stage_reports (id);
-
-ALTER TABLE chat_messages
-    ADD CONSTRAINT fk_chat_messages_on_request FOREIGN KEY (request_id) REFERENCES construction_requests (id);
-
-ALTER TABLE chat_messages
-    ADD CONSTRAINT fk_chat_messages_on_sender FOREIGN KEY (sender_id) REFERENCES users (id);
-
-ALTER TABLE video_streams
-    ADD CONSTRAINT fk_video_streams_on_request FOREIGN KEY (request_id) REFERENCES construction_requests (id);
 
 -- Индексы для производительности
 CREATE INDEX idx_project_photos_project_id ON project_photos(project_id);
@@ -190,6 +164,7 @@ CREATE INDEX idx_construction_stages_request_id ON construction_stages(request_i
 CREATE INDEX idx_stage_reports_stage_id ON stage_reports(stage_id);
 CREATE INDEX idx_report_photos_report_id ON report_photos(report_id);
 CREATE INDEX idx_chat_messages_request_id ON chat_messages(request_id);
+CREATE INDEX idx_chat_messages_sender_id ON chat_messages(sender_id);
 CREATE INDEX idx_chat_messages_is_read ON chat_messages(is_read);
 CREATE INDEX idx_video_streams_request_id ON video_streams(request_id);
 
@@ -205,9 +180,3 @@ COMMENT ON TABLE stage_reports IS 'Отчеты по выполненным эт
 COMMENT ON TABLE report_photos IS 'Фотографии к отчетам по этапам';
 COMMENT ON TABLE chat_messages IS 'Сообщения в чате между клиентом и специалистом';
 COMMENT ON TABLE video_streams IS 'Видеопотоки с камер на стройке';
-
--- Комментарии к ключевым полям
-COMMENT ON COLUMN chat_messages.message IS 'Текст сообщения в чате';
-COMMENT ON COLUMN chat_messages.is_read IS 'Флаг прочтения сообщения';
-COMMENT ON COLUMN video_streams.stream_url IS 'URL потокового видео с камеры';
-COMMENT ON COLUMN video_streams.camera_name IS 'Название камеры/расположение';

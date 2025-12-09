@@ -1,6 +1,7 @@
 package dev.msi_hackaton.backend_app.dao.entities;
 
 import jakarta.persistence.*;
+
 import java.time.Instant;
 import java.util.UUID;
 

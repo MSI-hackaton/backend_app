@@ -1,43 +1,68 @@
 spring:
   application:
     name: backend_app
-  profiles:
-    active: ${SPRING_PROFILES_ACTIVE:dev}
+  
+  # Включаем Docker Compose
+  docker:
+    compose:
+      enabled: true
+      file: docker-compose.yaml
 
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,prometheus
-  endpoint:
-    health:
-      show-details: always
+  # Настройки PostgreSQL
+  datasource:
+    url: jdbc:postgresql://localhost:5432/msi_db
+    username: postgres  # Используем postgres для администрирования
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-timeout: 30000
+      maximum-pool-size: 10
 
-springdoc:
-  swagger-ui:
-    path: /swagger-ui.html
-    urls:
-      - name: "Annotations (Code)"
-        url: /v3/api-docs
-      - name: "Custom YAML"
-        url: /v3/api-docs-yaml
-    defaultModelsExpandDepth: -1
-  api-docs:
+  # Отключаем Flyway для начала
+  flyway:
+    enabled: false
+
+  # Настройки JPA для PostgreSQL
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        jdbc:
+          lob:
+            non_contextual_creation: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+  # Отключаем SQL инициализацию
+  sql:
+    init:
+      mode: never
+
+  # WebSocket
+  websocket:
     enabled: true
-    paths-to-match: /api/**
 
+# Настройки хранилища
 storage:
   local:
-    directory: ./storage
+    directory: ./uploads
 
-    # Настройки видео (эмуляция)
-    video:
-      stream:
-        emulation:
-          enabled: true
-          url: https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4
+# Настройки видео
+video:
+  stream:
+    emulation:
+      enabled: true
+      url: https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4
 
-    # Если нужно WebSocket (опционально)
-    spring:
-      websocket:
-        enabled: false  # Можно включить позже
+# Логирование
+logging:
+  level:
+    root: INFO
+    dev.msi_hackaton.backend_app: DEBUG
+    org.springframework.web.socket: DEBUG
+    org.springframework.messaging: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
