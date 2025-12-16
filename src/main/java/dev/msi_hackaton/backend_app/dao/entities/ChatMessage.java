@@ -2,9 +2,6 @@ package dev.msi_hackaton.backend_app.dao.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import java.sql.Timestamp;
-import java.util.UUID;
 
 @Entity
 @Table(name = "chat_messages")
