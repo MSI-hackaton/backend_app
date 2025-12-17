@@ -2,7 +2,6 @@ package dev.msi_hackaton.backend_app.service;
 
 import dev.msi_hackaton.backend_app.dao.entities.Photo;
 import dev.msi_hackaton.backend_app.dao.repository.PhotoRepository;
-import dev.msi_hackaton.backend_app.dto.request.PhotoUploadDto;
 import dev.msi_hackaton.backend_app.dto.response.PhotoResponseDto;
 import dev.msi_hackaton.backend_app.exception.EntityNotFoundException;
 import dev.msi_hackaton.backend_app.mapper.PhotoMapper;

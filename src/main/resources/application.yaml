@@ -29,3 +29,8 @@ springdoc:
 storage:
   local:
     directory: ./storage
+
+token:
+  signing:
+    key: ${KEY:KcSZ0Vl23T7U9F2B7b/Qx9xH8m/zD63vW5Y4t/5Xl0J5v0bK6w74+0q4hI8rG1Fm67k8b9aM7/vY9V+k6T64eQ==}
+  expiration: 86400000
