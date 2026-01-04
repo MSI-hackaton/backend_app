@@ -18,16 +18,16 @@ public class ConstructionStage extends AbstractEntity {
     private ConstructionRequest request;
 
     @Column(name = "name", nullable = false)
-    private String name;  // Название этапа (например, "Фундамент")
+    private String name;
 
     @Column(name = "description", columnDefinition = "TEXT")
-    private String description;  // Описание этапа
+    private String description;
 
     @Column(name = "start_date")
-    private Instant startDate;  // Дата начала этапа
+    private Instant startDate;
 
     @Column(name = "end_date")
-    private Instant endDate;  // Дата окончания этапа
+    private Instant endDate;
 
     @Enumerated(EnumType.STRING)
     @Column(
@@ -35,5 +35,5 @@ public class ConstructionStage extends AbstractEntity {
             nullable = false,
             columnDefinition = "VARCHAR(20) DEFAULT 'PLANNED' CHECK (status IN ('PLANNED', 'IN_PROGRESS', 'COMPLETED'))"
     )
-    private StageStatus status;
+    private StageStatus status = StageStatus.PLANNED;
 }

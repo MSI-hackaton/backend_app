@@ -1,0 +1,56 @@
+package dev.msi_hackaton.backend_app.controller;
+
+import dev.msi_hackaton.backend_app.dto.request.ChatMessageCreateDto;
+import dev.msi_hackaton.backend_app.dto.response.ChatMessageResponseDto;
+import dev.msi_hackaton.backend_app.service.ChatService;
+import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
+
+@RestController
+@RequestMapping("/api/chat")
+@RequiredArgsConstructor
+public class ChatController {
+
+    private final ChatService chatService;
+
+    @PostMapping("/requests/{requestId}/messages")
+    @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "Отправить сообщение в чат",
+            description = "Отправляет сообщение в чат строительной площадки")
+    public ChatMessageResponseDto sendMessage(
+            @PathVariable UUID requestId,
+            @AuthenticationPrincipal UUID userId,
+            @Valid @RequestBody ChatMessageCreateDto createDto) {
+        return chatService.sendMessage(requestId, userId, createDto);
+    }
+
+    @GetMapping("/requests/{requestId}/messages")
+    @Operation(summary = "Получить историю чата",
+            description = "Возвращает все сообщения в чате строительной площадки")
+    public List<ChatMessageResponseDto> getChatHistory(@PathVariable UUID requestId) {
+        return chatService.getChatHistory(requestId);
+    }
+
+    @PatchMapping("/messages/{messageId}/read")
+    @Operation(summary = "Отметить сообщение как прочитанное",
+            description = "Отмечает сообщение как прочитанное текущим пользователем")
+    public void markAsRead(@PathVariable UUID messageId) {
+        chatService.markAsRead(messageId);
+    }
+
+    @GetMapping("/requests/{requestId}/unread-count")
+    @Operation(summary = "Получить количество непрочитанных сообщений",
+            description = "Возвращает количество непрочитанных сообщений в чате")
+    public Long getUnreadCount(
+            @PathVariable UUID requestId,
+            @AuthenticationPrincipal UUID userId) {
+        return chatService.getUnreadCount(requestId, userId);
+    }
+}

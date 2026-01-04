@@ -4,21 +4,27 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import dev.msi_hackaton.backend_app.dao.entities.Project;
-import dev.msi_hackaton.backend_app.dao.entities.User;
-import dev.msi_hackaton.backend_app.dao.entities.enums.ProjectStatus;
-import dev.msi_hackaton.backend_app.dao.entities.enums.UserRole;
-import dev.msi_hackaton.backend_app.dao.repository.ProjectRepository;
-import dev.msi_hackaton.backend_app.dao.repository.UserRepository;
+import dev.msi_hackaton.backend_app.dao.entities.*;
+import dev.msi_hackaton.backend_app.dao.entities.enums.*;
+import dev.msi_hackaton.backend_app.dao.repository.*;
+
+import java.util.List;
 
 @Configuration
 public class DataInitializer {
 
     @Bean
-    public CommandLineRunner init(ProjectRepository projectRepository, UserRepository userRepository) {
-        return args -> {
-            if (projectRepository.count() == 0) {
+    public CommandLineRunner init(
+            ProjectRepository projectRepository,
+            UserRepository userRepository,
+            ConstructionRequestRepository requestRepository,
+            VideoStreamRepository videoStreamRepository,
+            PhotoRepository photoRepository,
+            ProjectPhotoRepository projectPhotoRepository) {
 
+        return args -> {
+            // Проекты
+            if (projectRepository.count() == 0) {
                 Project p1 = new Project();
                 p1.setTitle("Дом 120 м²");
                 p1.setDescription("Современный дом с панорамными окнами.");
@@ -43,19 +49,97 @@ public class DataInitializer {
                 System.out.println("✔ Test projects inserted");
             }
 
+            // Пользователи
             if (userRepository.count() == 0) {
+                User customer = new User();
+                customer.setEmail("customer@example.com");
+                customer.setPhone("+79990000001");
+                customer.setPasswordHash("111");
+                customer.setSalt("111");
+                customer.setFullName("Иван Иванов");
+                customer.setRole(UserRole.CUSTOMER);
 
-                User user = new User();
-                user.setEmail("test.user@example.com");
-                user.setPhone("+79990000000");
-                user.setFullName("Тестовый Пользователь");
-                user.setRole(UserRole.CUSTOMER);
+                User specialist = new User();
+                specialist.setEmail("specialist@example.com");
+                specialist.setPhone("+79990000002");
+                specialist.setPasswordHash("111");
+                specialist.setSalt("111");
+                specialist.setFullName("Петр Петров (Специалист)");
+                specialist.setRole(UserRole.SPECIALIST);
 
-                userRepository.save(user);
-
-                System.out.println("✔ Test user inserted");
+                userRepository.save(customer);
+                userRepository.save(specialist);
+                System.out.println("✔ Test users inserted");
             }
 
+            // Тестовая заявка и видеопотоки
+            if (requestRepository.count() == 0) {
+                Project project = projectRepository.findAll().get(0);
+                User customer = userRepository.findByEmail("customer@example.com").orElseThrow();
+
+                ConstructionRequest request = new ConstructionRequest();
+                request.setProject(project);
+                request.setStatus(RequestStatus.APPROVED);
+                request.setAnonymousFullName(customer.getFullName());
+                request.setAnonymousEmail(customer.getEmail());
+                request.setAnonymousPhone(customer.getPhone());
+
+                request = requestRepository.save(request);
+
+                if (videoStreamRepository.count() == 0) {
+                    // Добавляем тестовые видеопотоки
+                    VideoStream stream1 = new VideoStream();
+                    stream1.setRequest(request);
+                    stream1.setStreamUrl("rtsp://demo.stream:554/live.sdp");
+                    stream1.setCameraName("Камера 1 - Фасад");
+                    stream1.setCameraLocation("Северная сторона");
+                    stream1.setThumbnailUrl("https://via.placeholder.com/320x240?text=Фасад");
+                    stream1.setIsActive(true);
+
+                    VideoStream stream2 = new VideoStream();
+                    stream2.setRequest(request);
+                    stream2.setStreamUrl("rtsp://demo.stream:554/backyard.sdp");
+                    stream2.setCameraName("Камера 2 - Внутренний двор");
+                    stream2.setCameraLocation("Южная сторона");
+                    stream2.setThumbnailUrl("https://via.placeholder.com/320x240?text=Двор");
+                    stream2.setIsActive(true);
+
+                    videoStreamRepository.save(stream1);
+                    videoStreamRepository.save(stream2);
+                    System.out.println("✔ Test video streams inserted");
+                }
+
+                // Добавляем тестовые фотографии к проекту
+                if (photoRepository.count() == 0 && projectPhotoRepository.count() == 0) {
+                    Photo photo1 = new Photo();
+                    photo1.setUrl("https://via.placeholder.com/800x600?text=Проект+1");
+
+                    Photo photo2 = new Photo();
+                    photo2.setUrl("https://via.placeholder.com/800x600?text=Интерьер");
+
+                    photo1 = photoRepository.save(photo1);
+                    photo2 = photoRepository.save(photo2);
+
+                    Project projectWithPhotos = projectRepository.findAll().get(0);
+
+                    ProjectPhoto projectPhoto1 = new ProjectPhoto();
+                    projectPhoto1.setProject(projectWithPhotos);
+                    projectPhoto1.setPhoto(photo1);
+                    projectPhoto1.setSortOrder(1);
+                    projectPhoto1.setDescription("Вид фасада");
+
+                    ProjectPhoto projectPhoto2 = new ProjectPhoto();
+                    projectPhoto2.setProject(projectWithPhotos);
+                    projectPhoto2.setPhoto(photo2);
+                    projectPhoto2.setSortOrder(2);
+                    projectPhoto2.setDescription("Интерьер гостиной");
+
+                    projectPhotoRepository.save(projectPhoto1);
+                    projectPhotoRepository.save(projectPhoto2);
+
+                    System.out.println("✔ Test photos inserted");
+                }
+            }
         };
     }
 }

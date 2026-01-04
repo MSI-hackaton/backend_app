@@ -38,7 +38,7 @@ public class Project extends AbstractEntity {
             nullable = false,
             columnDefinition = "VARCHAR(20) DEFAULT 'AVAILABLE' CHECK (status IN ('AVAILABLE', 'UNDER_CONSTRUCTION', 'COMPLETED'))"
     )
-    private ProjectStatus status;
+    private ProjectStatus status = ProjectStatus.AVAILABLE;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProjectPhoto> projectPhotos = new ArrayList<>();

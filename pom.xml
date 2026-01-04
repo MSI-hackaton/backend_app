@@ -126,6 +126,7 @@
             <version>${springdoc.version}</version>
         </dependency>
 
+
         <!-- Security -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -149,6 +150,10 @@
             <scope>runtime</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

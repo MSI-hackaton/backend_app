@@ -1,15 +1,13 @@
 package dev.msi_hackaton.backend_app.dao.entities;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "chat_messages")
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class ChatMessage extends AbstractEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -20,9 +18,9 @@ public class ChatMessage extends AbstractEntity {
     @JoinColumn(name = "sender_id", nullable = false)
     private User sender;
 
-    @Column(name = "text", length = 5000, nullable = false)  // 5KB лимит
+    @Column(name = "text", length = 5000, nullable = false)
     private String message;
 
-    @Column(name = "is_read", nullable = false, columnDefinition = "boolean DEFAULT false")
-    private Boolean isRead;
+    @Column(name = "is_read", nullable = false)
+    private Boolean isRead = false;
 }

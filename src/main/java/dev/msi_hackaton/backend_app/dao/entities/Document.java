@@ -18,10 +18,10 @@ public class Document extends AbstractEntity {
     private ConstructionRequest request;
 
     @Column(name = "name", nullable = false)
-    private String name;  // Название документа
+    private String name;
 
     @Column(name = "file_url", nullable = false)
-    private String fileUrl;  // Ссылка на файл в облачном хранилище
+    private String fileUrl;
 
     @Enumerated(EnumType.STRING)
     @Column(
@@ -29,7 +29,7 @@ public class Document extends AbstractEntity {
             nullable = false,
             columnDefinition = "VARCHAR(20) DEFAULT 'UPLOADED' CHECK (status IN ('UPLOADED', 'UNDER_REVIEW', 'APPROVED', 'REJECTED'))"
     )
-    private DocumentStatus status;
+    private DocumentStatus status = DocumentStatus.UPLOADED;
 
     @Column(name = "reviewed_at")
     private Instant reviewedAt;

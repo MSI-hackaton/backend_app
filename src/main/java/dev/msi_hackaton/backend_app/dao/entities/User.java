@@ -32,5 +32,5 @@ public class User extends AbstractEntity {
             nullable = false,
             columnDefinition = "VARCHAR(20) DEFAULT 'CUSTOMER' CHECK (role IN ('CUSTOMER', 'SPECIALIST', 'ADMIN'))"
     )
-    private UserRole role;
+    private UserRole role = UserRole.CUSTOMER;
 }

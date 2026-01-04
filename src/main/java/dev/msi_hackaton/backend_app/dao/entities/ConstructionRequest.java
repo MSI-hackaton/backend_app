@@ -21,7 +21,7 @@ public class ConstructionRequest extends AbstractEntity {
             nullable = false,
             columnDefinition = "VARCHAR(20) DEFAULT 'PENDING' CHECK (status IN ('PENDING', 'APPROVED', 'REJECTED'))"
     )
-    private RequestStatus status;
+    private RequestStatus status = RequestStatus.PENDING;
 
     @Column(name = "anonymous_full_name")
     private String anonymousFullName;

@@ -16,7 +16,7 @@ public class StageReport extends AbstractEntity {
     private ConstructionStage stage;
 
     @Column(name = "description", columnDefinition = "TEXT", nullable = false)
-    private String description;  // Описание выполненных работ
+    private String description;
 
     @Enumerated(EnumType.STRING)
     @Column(
@@ -24,5 +24,5 @@ public class StageReport extends AbstractEntity {
             nullable = false,
             columnDefinition = "VARCHAR(20) DEFAULT 'DRAFT' CHECK (status IN ('DRAFT', 'PUBLISHED'))"
     )
-    private ReportStatus status;
+    private ReportStatus status = ReportStatus.DRAFT;
 }
