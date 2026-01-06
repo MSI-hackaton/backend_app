@@ -14,8 +14,8 @@ import java.time.Instant;
 public class Document extends AbstractEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "request_id", nullable = false)
-    private ConstructionRequest request;
+    @JoinColumn(name = "construction_id", nullable = false)
+    private ConstructionStage construction;
 
     @Column(name = "name", nullable = false)
     private String name;  // Название документа

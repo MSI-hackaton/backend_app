@@ -11,8 +11,8 @@ import lombok.Setter;
 public class VideoStream extends AbstractEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "request_id", nullable = false)
-    private ConstructionRequest request;
+    @JoinColumn(name = "construction_id", nullable = false)
+    private ConstructionStage construction;
 
     @Column(name = "stream_url", nullable = false)
     private String streamUrl;  // URL потокового видео
