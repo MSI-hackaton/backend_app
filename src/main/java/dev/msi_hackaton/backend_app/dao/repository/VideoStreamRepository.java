@@ -8,5 +8,5 @@ import java.util.UUID;
 
 @Repository
 public interface VideoStreamRepository extends AbstractRepository<VideoStream> {
-    List<VideoStream> findByRequestId(UUID requestId);
+    List<VideoStream> findByConstructionId(UUID constructionId);
 }

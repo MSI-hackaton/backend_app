@@ -8,7 +8,7 @@ import java.util.UUID;
 
 @Repository
 public interface ChatMessageRepository extends AbstractRepository<ChatMessage> {
-    List<ChatMessage> findByRequestIdOrderByCreatedAt(UUID requestId);
-    List<ChatMessage> findByRequestIdAndIsReadFalse(UUID requestId);
-    Long countByRequestIdAndIsReadFalse(UUID requestId);
+    List<ChatMessage> findByConstructionIdOrderByCreatedAt(UUID constructionId);
+    List<ChatMessage> findByConstructionIdAndIsReadFalse(UUID constructionId);
+    Long countByConstructionIdAndIsReadFalse(UUID constructionId);
 }
