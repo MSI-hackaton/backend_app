@@ -22,9 +22,11 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/code").permitAll() 
+                .requestMatchers("/ws-chat/**", "/websocket-test.html").permitAll()
+                .requestMatchers("/api/auth/code").permitAll()
                 .requestMatchers("/api/auth/sign-in").permitAll()
                 .requestMatchers("/api/projects/**").permitAll()
+                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

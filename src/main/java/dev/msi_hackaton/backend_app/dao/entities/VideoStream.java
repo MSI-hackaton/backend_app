@@ -18,5 +18,14 @@ public class VideoStream extends AbstractEntity {
     private String streamUrl;  // URL потокового видео
 
     @Column(name = "camera_name", nullable = false)
-    private String cameraName;  // Название камеры
+    private String cameraName;
+
+    @Column(name = "is_active", nullable = false)
+    private Boolean isActive = true;
+
+    @Column(name = "camera_location")
+    private String cameraLocation;
+
+    @Column(name = "thumbnail_url")
+    private String thumbnailUrl;
 }

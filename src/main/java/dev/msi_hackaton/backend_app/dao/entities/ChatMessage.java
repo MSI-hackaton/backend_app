@@ -1,15 +1,13 @@
 package dev.msi_hackaton.backend_app.dao.entities;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "chat_messages")
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class ChatMessage extends AbstractEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
