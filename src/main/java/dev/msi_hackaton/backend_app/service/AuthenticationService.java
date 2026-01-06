@@ -19,7 +19,7 @@ public class AuthenticationService {
         if (identifier.contains("@")) {
             user = userService.getUserByEmail(identifier);
         } else {
-            user = userService.getUserByEmail(identifier);
+            user = userService.getUserByPhone(identifier);
         }
 
         if (!validateCode(code, identifier)) {
