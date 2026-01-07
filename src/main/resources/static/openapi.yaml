@@ -275,7 +275,101 @@ paths:
                 $ref: '#/components/schemas/ConstructionRequestStatusResponseDto'
         '404':
           description: Заявка не найдена
+/api/video-streams/constrictions/{constructionId}:
+  post:
+    summary: Добавить видеопоток к заявке
+    description: Создаёт новую камеру видеонаблюдения для строительной площадки
+    parameters:
+      - name: constructionId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/VideoStreamCreateDto'
+    responses:
+      '201':
+        description: Видеопоток создан
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VideoStreamResponseDto'
+      '404':
+        description: Заявка не найдена
 
+  get:
+    summary: Получить все видеопотоки заявки
+    description: Возвращает список всех камер для данной строительной площадки
+    parameters:
+      - name: constructionId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Список видеопотоков
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/VideoStreamResponseDto'
+
+  /api/chat/constructions/{constructionId}/messages:
+    post:
+      summary: Отправить сообщение в чат
+      description: Отправляет сообщение в чат строительной площадки
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: constructionId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatMessageCreateDto'
+      responses:
+        '201':
+          description: Сообщение отправлено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatMessageResponseDto'
+
+    get:
+      summary: Получить историю чата
+      description: Возвращает все сообщения в чате строительной площадки
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: constructionId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: История чата
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ChatMessageResponseDto'
 
 
 
@@ -418,3 +512,79 @@ components:
         updatedAt:
           type: string
           format: date-time
+VideoStreamCreateDto:
+  type: object
+  required:
+    - streamUrl
+    - cameraName
+  properties:
+    streamUrl:
+      type: string
+      description: URL потокового видео (RTSP, HLS и т.д.)
+    cameraName:
+      type: string
+      description: Название камеры
+    cameraLocation:
+      type: string
+      description: Расположение камеры на площадке
+    thumbnailUrl:
+      type: string
+      description: URL превью камеры
+
+  VideoStreamResponseDto:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+      constructionId:
+        type: string
+        format: uuid
+      streamUrl:
+        type: string
+      cameraName:
+        type: string
+      cameraLocation:
+        type: string
+      thumbnailUrl:
+        type: string
+      isActive:
+        type: boolean
+      createdAt:
+        type: string
+        format: date-time
+      updatedAt:
+        type: string
+        format: date-time
+
+  ChatMessageCreateDto:
+    type: object
+    required:
+      - message
+    properties:
+      message:
+        type: string
+        maxLength: 5000
+        description: Текст сообщения
+
+  ChatMessageResponseDto:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+      constructionId:
+        type: string
+        format: uuid
+      senderId:
+        type: string
+        format: uuid
+      senderName:
+        type: string
+      message:
+        type: string
+      isRead:
+        type: boolean
+      createdAt:
+        type: string
+        format: date-time

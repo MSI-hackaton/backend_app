@@ -20,9 +20,6 @@ public class User extends AbstractEntity {
     @Column(name = "password_hash", nullable = false)
     private String passwordHash = "111";
 
-    @Column(name = "salt", nullable = false)
-    private String salt = "111";
-
     @Column(name = "full_name", nullable = false)
     private String fullName;
 
