@@ -99,8 +99,8 @@ public class DataInitializer {
                 construction.setRequest(request);
                 construction.setProject(project);
                 construction.setCustomer(customer);
-                construction.setName("Фундамент");
-                construction.setDescription("Заливка фундамента для здания");
+                construction.setName("Частный жилой дом");
+                construction.setDescription("Строительство дома на ул. Лесной");
                 construction.setStartDate(Instant.now()); // Текущая дата/время
                 construction.setEndDate(Instant.now().plusSeconds(2592000)); // +30 дней
                 construction.setStatus(StageStatus.PLANNED);
