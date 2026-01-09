@@ -275,7 +275,7 @@ paths:
                 $ref: '#/components/schemas/ConstructionRequestStatusResponseDto'
         '404':
           description: Заявка не найдена
-/api/video-streams/constrictions/{constructionId}:
+/api/video-streams/constructions/{constructionId}:
   post:
     summary: Добавить видеопоток к заявке
     description: Создаёт новую камеру видеонаблюдения для строительной площадки

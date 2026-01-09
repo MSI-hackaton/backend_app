@@ -18,10 +18,22 @@ public class Document extends AbstractEntity {
     private ConstructionStage construction;
 
     @Column(name = "name", nullable = false)
-    private String name;  // Название документа
+    private String name;
+
+    @Column(name = "description", columnDefinition = "TEXT")
+    private String description;
 
     @Column(name = "file_url", nullable = false)
-    private String fileUrl;  // Ссылка на файл в облачном хранилище
+    private String fileUrl;
+
+    @Column(name = "original_filename")
+    private String originalFilename;
+
+    @Column(name = "file_size")
+    private Long fileSize;
+
+    @Column(name = "mime_type")
+    private String mimeType;
 
     @Enumerated(EnumType.STRING)
     @Column(
@@ -33,4 +45,8 @@ public class Document extends AbstractEntity {
 
     @Column(name = "reviewed_at")
     private Instant reviewedAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reviewed_by")
+    private User reviewedBy;
 }
