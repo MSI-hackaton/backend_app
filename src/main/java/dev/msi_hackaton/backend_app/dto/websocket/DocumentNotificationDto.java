@@ -1,4 +1,3 @@
-// src/main/java/dev/msi_hackaton/backend_app/dto/websocket/DocumentNotificationDto.java
 package dev.msi_hackaton.backend_app.dto.websocket;
 
 import lombok.AllArgsConstructor;

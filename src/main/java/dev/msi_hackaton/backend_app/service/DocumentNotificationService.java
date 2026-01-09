@@ -222,8 +222,7 @@ public class DocumentNotificationService {
             default -> status.name();
         };
     }
-
-    // Вспомогательный метод для получения UserId из Principal
+    
     public UUID getUserIdFromPrincipal(Principal principal) {
         if (principal == null) return null;
 

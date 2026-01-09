@@ -99,8 +99,7 @@ public class DocumentAgreementService {
 
     @Transactional(readOnly = true)
     public List<DocumentAgreementResponseDto> getPendingAgreementsForUser(UUID userId) {
-        // Здесь можно добавить логику для определения, какие документы требуют действий пользователя
-        // Например, документы в статусе CLIENT_REVIEW для данного пользователя
+
         return documentAgreementRepository.findAll().stream()
                 .filter(agreement -> agreement.getStatus() == DocumentAgreementStatus.CLIENT_REVIEW)
                 .map(this::mapToDto)
