@@ -1,5 +1,5 @@
 -- Таблица согласования документов
-CREATE TABLE document_agreements (
+CREATE TABLE IF NOT EXISTS document_agreements (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW(),
@@ -16,7 +16,7 @@ CREATE TABLE document_agreements (
 );
 
 -- Таблица документов для согласования
-CREATE TABLE agreement_documents (
+CREATE TABLE IF NOT EXISTS agreement_documents (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW(),
@@ -31,11 +31,11 @@ CREATE TABLE agreement_documents (
 );
 
 -- Индексы для производительности
-CREATE INDEX idx_document_agreements_request ON document_agreements(construction_request_id);
-CREATE INDEX idx_document_agreements_status ON document_agreements(status);
-CREATE INDEX idx_document_agreements_deadline ON document_agreements(deadline);
-CREATE INDEX idx_agreement_documents_agreement ON agreement_documents(document_agreement_id);
-CREATE INDEX idx_agreement_documents_sort_order ON agreement_documents(sort_order);
+CREATE INDEX IF NOT EXISTS idx_document_agreements_request ON document_agreements(construction_request_id);
+CREATE INDEX IF NOT EXISTS idx_document_agreements_status ON document_agreements(status);
+CREATE INDEX IF NOT EXISTS idx_document_agreements_deadline ON document_agreements(deadline);
+CREATE INDEX IF NOT EXISTS idx_agreement_documents_agreement ON agreement_documents(document_agreement_id);
+CREATE INDEX IF NOT EXISTS idx_agreement_documents_sort_order ON agreement_documents(sort_order);
 
 -- Комментарии к таблицам
 COMMENT ON TABLE document_agreements IS 'Таблица для хранения документов, требующих согласования';
@@ -50,10 +50,10 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
-CREATE TRIGGER update_document_agreements_updated_at
+CREATE OR REPLACE TRIGGER update_document_agreements_updated_at
     BEFORE UPDATE ON document_agreements
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
-CREATE TRIGGER update_agreement_documents_updated_at
+CREATE OR REPLACE TRIGGER update_agreement_documents_updated_at
     BEFORE UPDATE ON agreement_documents
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();

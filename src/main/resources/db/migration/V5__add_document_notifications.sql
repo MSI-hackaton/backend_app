@@ -1,5 +1,5 @@
 -- Таблица шаблонов документов
-CREATE TABLE document_templates (
+CREATE TABLE IF NOT EXISTS document_templates (
     id UUID PRIMARY KEY,
     created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     updated_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
@@ -10,7 +10,7 @@ CREATE TABLE document_templates (
 );
 
 -- Таблица связей шаблонов и этапов строительства
-CREATE TABLE construction_stage_document_templates (
+CREATE TABLE IF NOT EXISTS construction_stage_document_templates (
     id UUID PRIMARY KEY,
     created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     updated_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
@@ -21,7 +21,7 @@ CREATE TABLE construction_stage_document_templates (
 );
 
 -- Таблица уведомлений о документах
-CREATE TABLE document_notifications (
+CREATE TABLE IF NOT EXISTS document_notifications (
     id UUID PRIMARY KEY,
     created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     updated_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
@@ -34,8 +34,8 @@ CREATE TABLE document_notifications (
 );
 
 -- Индексы для новых таблиц
-CREATE INDEX idx_document_templates_category ON document_templates(category);
-CREATE INDEX idx_cs_doc_templates_stage ON construction_stage_document_templates(construction_stage_id);
-CREATE INDEX idx_cs_doc_templates_template ON construction_stage_document_templates(document_template_id);
-CREATE INDEX idx_doc_notifications_user_unread ON document_notifications(user_id, is_read, created_at DESC);
-CREATE INDEX idx_doc_notifications_document ON document_notifications(document_id);
+CREATE INDEX IF NOT EXISTS idx_document_templates_category ON document_templates(category);
+CREATE INDEX IF NOT EXISTS idx_cs_doc_templates_stage ON construction_stage_document_templates(construction_stage_id);
+CREATE INDEX IF NOT EXISTS idx_cs_doc_templates_template ON construction_stage_document_templates(document_template_id);
+CREATE INDEX IF NOT EXISTS idx_doc_notifications_user_unread ON document_notifications(user_id, is_read, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_doc_notifications_document ON document_notifications(document_id);

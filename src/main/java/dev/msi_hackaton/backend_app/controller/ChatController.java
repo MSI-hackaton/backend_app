@@ -1,5 +1,6 @@
 package dev.msi_hackaton.backend_app.controller;
 
+import dev.msi_hackaton.backend_app.dto.UserDto;
 import dev.msi_hackaton.backend_app.dto.request.ChatMessageCreateDto;
 import dev.msi_hackaton.backend_app.dto.response.ChatMessageResponseDto;
 import dev.msi_hackaton.backend_app.service.ChatService;
@@ -22,13 +23,11 @@ public class ChatController {
 
     @PostMapping("/constructions/{constructionId}/messages")
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Отправить сообщение в чат",
-            description = "Отправляет сообщение в чат строительной площадки")
     public ChatMessageResponseDto sendMessage(
             @PathVariable UUID constructionId,
-            @AuthenticationPrincipal UUID userId,
+            @AuthenticationPrincipal UserDto user,
             @Valid @RequestBody ChatMessageCreateDto createDto) {
-        return chatService.sendMessage(constructionId, userId, createDto);
+        return chatService.sendMessage(constructionId, user.getId(), createDto);
     }
 
     @GetMapping("/constructions/{constructionId}/messages")
