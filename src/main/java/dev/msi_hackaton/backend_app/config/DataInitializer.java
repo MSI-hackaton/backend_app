@@ -1,5 +1,6 @@
 package dev.msi_hackaton.backend_app.config;
 
+import dev.msi_hackaton.backend_app.service.FileStorageService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -7,9 +8,12 @@ import org.springframework.context.annotation.Configuration;
 import dev.msi_hackaton.backend_app.dao.entities.*;
 import dev.msi_hackaton.backend_app.dao.entities.enums.*;
 import dev.msi_hackaton.backend_app.dao.repository.*;
+import org.springframework.mock.web.MockMultipartFile;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Instant;
-import java.util.List;
+import java.util.Map;
 
 @Configuration
 public class DataInitializer {
@@ -22,7 +26,8 @@ public class DataInitializer {
             ConstructionStageRepository stageRepository,
             VideoStreamRepository videoStreamRepository,
             PhotoRepository photoRepository,
-            ProjectPhotoRepository projectPhotoRepository) {
+            ProjectPhotoRepository projectPhotoRepository,
+            FileStorageService storageService) {
 
         return args -> {
             // Проекты
@@ -49,6 +54,64 @@ public class DataInitializer {
                 projectRepository.save(p2);
 
                 System.out.println("✔ Test projects inserted");
+
+                // Загружаем фото для каждого проекта
+                // корневая папка с проектами
+                Path photosRoot = Path.of("src/main/resources/photos");
+
+                // связь папка → проект
+                Map<String, Project> projectByFolder = Map.of(
+                        "project-1", p1,
+                        "project-2", p2
+                );
+
+                for (Map.Entry<String, Project> entry : projectByFolder.entrySet()) {
+
+                    String folderName = entry.getKey();   // "project-1"
+                    Project project = entry.getValue();   // p1
+
+                    Path projectDir = photosRoot.resolve(folderName);
+
+                    // если папки нет — пропускаем
+                    if (!Files.exists(projectDir) || !Files.isDirectory(projectDir)) {
+                        System.out.println("⚠ Папка не найдена: " + projectDir);
+                        continue;
+                    }
+
+                    // идём по файлам внутри папки
+                    Files.list(projectDir)
+                            .filter(Files::isRegularFile)
+                            .forEach(photoPath -> {
+                                try {
+                                    String fileName = photoPath.getFileName().toString();
+
+                                    MockMultipartFile file = new MockMultipartFile(
+                                            fileName,
+                                            fileName,
+                                            Files.probeContentType(photoPath),
+                                            Files.readAllBytes(photoPath)
+                                    );
+
+                                    String fileUrl = storageService.upload(file);
+
+                                    Photo photo = new Photo();
+                                    photo.setUrl("api/files/" + fileUrl);
+                                    photo = photoRepository.save(photo);
+
+                                    ProjectPhoto projectPhoto = new ProjectPhoto();
+                                    projectPhoto.setProject(project);
+                                    projectPhoto.setPhoto(photo);
+
+                                    projectPhotoRepository.save(projectPhoto);
+
+                                    System.out.println("✔ " + fileName + " → " + project.getTitle());
+
+                                } catch (Exception e) {
+                                    throw new RuntimeException("Ошибка загрузки фото: " + photoPath, e);
+                                }
+                            });
+
+                }
             }
 
             // Пользователи
@@ -137,7 +200,7 @@ public class DataInitializer {
                 System.out.println("✔ Test video streams inserted");
             }
 
-            // Добавляем тестовые фотографии к проекту
+            /*// Добавляем тестовые фотографии к проекту
             if (photoRepository.count() == 0 && projectPhotoRepository.count() == 0) {
                 Photo photo1 = new Photo();
                 photo1.setUrl("https://via.placeholder.com/800x600?text=Проект+1");
@@ -166,7 +229,7 @@ public class DataInitializer {
                 projectPhotoRepository.save(projectPhoto2);
 
                 System.out.println("✔ Test photos inserted");
-            }
+            }*/
         };
     }
 }

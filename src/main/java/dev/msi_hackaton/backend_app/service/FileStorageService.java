@@ -3,6 +3,7 @@ package dev.msi_hackaton.backend_app.service;
 import io.minio.GetObjectArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,24 @@ public class FileStorageService {
 
     @Value("${minio.bucket}")
     private String bucket;
+
+    @PostConstruct
+    public void init() {
+        try {
+            boolean exists = minioClient.bucketExists(
+                    io.minio.BucketExistsArgs.builder().bucket(bucket).build()
+            );
+            if (!exists) {
+                minioClient.makeBucket(
+                        io.minio.MakeBucketArgs.builder().bucket(bucket).build()
+                );
+                System.out.println("✔ Bucket created: " + bucket);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to initialize MinIO bucket", e);
+        }
+    }
+
 
     public String upload(MultipartFile file) {
         try {
