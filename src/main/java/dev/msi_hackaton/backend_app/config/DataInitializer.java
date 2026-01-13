@@ -108,6 +108,16 @@ public class DataInitializer {
                 foundationStage.setEndDate(Instant.now().plusSeconds(2592000)); // +30 дней
                 foundationStage.setStatus(StageStatus.COMPLETED);
                 foundationStage.setSpecialist(specialist);
+                ConstructionStage construction = new ConstructionStage();
+                construction.setRequest(request);
+                construction.setProject(project);
+                construction.setCustomer(customer);
+                construction.setName("Частный жилой дом");
+                construction.setDescription("Строительство дома на ул. Лесной");
+                construction.setStartDate(Instant.now()); // Текущая дата/время
+                construction.setEndDate(Instant.now().plusSeconds(2592000)); // +30 дней
+                construction.setStatus(StageStatus.PLANNED);
+                construction.setSpecialist(specialist);
 
                 ConstructionStage wallsStage = new ConstructionStage();
                 wallsStage.setRequest(request);
@@ -159,18 +169,18 @@ public class DataInitializer {
                 // Добавляем тестовые видеопотоки
                 VideoStream stream1 = new VideoStream();
                 stream1.setConstruction(construction);
-                stream1.setStreamUrl("rtsp://demo.stream:554/live.sdp");
+                stream1.setStreamUrl("https://test-streams.mux.dev/test_001/stream.m3u8");
                 stream1.setCameraName("Камера 1 - Фасад");
                 stream1.setCameraLocation("Северная сторона");
-                stream1.setThumbnailUrl("https://via.placeholder.com/320x240?text=Фасад");
+                stream1.setThumbnailUrl("https://test-streams.mux.dev/test_001/stream.m3u8?text=Фасад");
                 stream1.setIsActive(true);
 
                 VideoStream stream2 = new VideoStream();
                 stream2.setConstruction(construction);
-                stream2.setStreamUrl("rtsp://demo.stream:554/backyard.sdp");
+                stream2.setStreamUrl("https://test-streams.mux.dev/dai-discontinuity-deltatre/manifest.m3u8");
                 stream2.setCameraName("Камера 2 - Внутренний двор");
                 stream2.setCameraLocation("Южная сторона");
-                stream2.setThumbnailUrl("https://via.placeholder.com/320x240?text=Двор");
+                stream2.setThumbnailUrl("https://test-streams.mux.dev/dai-discontinuity-deltatre/manifest.m3u8?text=Двор");
                 stream2.setIsActive(true);
 
                 videoStreamRepository.save(stream1);

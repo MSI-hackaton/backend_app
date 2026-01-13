@@ -25,10 +25,12 @@ public class ChatController {
     @ResponseStatus(HttpStatus.CREATED)
     public ChatMessageResponseDto sendMessage(
             @PathVariable UUID constructionId,
-            @AuthenticationPrincipal UserDto user,
-            @Valid @RequestBody ChatMessageCreateDto createDto) {
+            @Valid @RequestBody ChatMessageCreateDto createDto,
+            @AuthenticationPrincipal UserDto user) {
+
         return chatService.sendMessage(constructionId, user.getId(), createDto);
     }
+
 
     @GetMapping("/constructions/{constructionId}/messages")
     @Operation(summary = "Получить историю чата",
