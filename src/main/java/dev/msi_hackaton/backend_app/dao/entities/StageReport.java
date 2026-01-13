@@ -5,6 +5,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
 @Entity
@@ -16,13 +19,12 @@ public class StageReport extends AbstractEntity {
     private ConstructionStage stage;
 
     @Column(name = "description", columnDefinition = "TEXT", nullable = false)
-    private String description;  // Описание выполненных работ
+    private String description;
 
     @Enumerated(EnumType.STRING)
-    @Column(
-            name = "status",
-            nullable = false,
-            columnDefinition = "VARCHAR(20) DEFAULT 'DRAFT' CHECK (status IN ('DRAFT', 'PUBLISHED'))"
-    )
+    @Column(name = "status", nullable = false, columnDefinition = "VARCHAR(20) DEFAULT 'DRAFT' CHECK (status IN ('DRAFT', 'PUBLISHED'))")
     private ReportStatus status;
+
+    @OneToMany(mappedBy = "report", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ReportPhoto> reportPhotos = new ArrayList<>();
 }

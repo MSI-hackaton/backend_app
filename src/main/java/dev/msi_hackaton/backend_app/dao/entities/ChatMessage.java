@@ -18,7 +18,7 @@ public class ChatMessage extends AbstractEntity {
     @JoinColumn(name = "sender_id", nullable = false)
     private User sender;
 
-    @Column(name = "text", length = 5000, nullable = false)  // 5KB лимит
+    @Column(name = "message", nullable = false, columnDefinition = "TEXT")  // 5KB лимит
     private String message;
 
     @Column(name = "is_read", nullable = false, columnDefinition = "boolean DEFAULT false")
