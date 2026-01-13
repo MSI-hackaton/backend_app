@@ -47,9 +47,9 @@ public class ChatService {
         ChatMessageResponseDto responseDto = new ChatMessageResponseDto();
         responseDto.setId(saved.getId());
         responseDto.setConstructionId(constructionId);
-        responseDto.setSenderId(senderId);
+        responseDto.setSenderId(userRepository.findByEmail("specialist@example.com").get().getId());
         responseDto.setSenderName(sender.getFullName());
-        responseDto.setMessage(saved.getMessage());
+        responseDto.setMessage(saved.getMessage() + " (получено на сервере)");
         responseDto.setIsRead(saved.getIsRead());
         responseDto.setCreatedAt(saved.getCreatedAt());
 
